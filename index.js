@@ -11,6 +11,9 @@ const worker = createWorker({
 })
 ///////////////////////
 
+//////Cors///////
+app.use(cors())
+
 /////// Update Storage //////
 
 const storage = multer.diskStorage({
