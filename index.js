@@ -40,16 +40,13 @@ app.get("/", (req, res, next) => {
 app.post("/upload", (req, res, next) => {
     upload(req, res, next => {
         fs.readFile(`./upload/${req.file.originalname}`, async (err, data) => {
-            if (err) return console.log(err)
+            if (err) return console.log({err})
             async function transform() {
                 await worker.load();
                 await worker.loadLanguage('spa');
                 await worker.initialize('spa');
                 const { data: { text } } = await worker.recognize(`./upload/${req.file.originalname}`);
-                console.log(text)
-                //console.log(text.indexOf("AHORRAMAS"));
-                //console.log(text.split("").slice(75).join(""))
-                //await worker.terminate();
+                await worker.terminate();
                 return text
             }
             await transform()
