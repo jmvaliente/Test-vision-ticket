@@ -37,9 +37,9 @@ app.get("/", (req, res, next) => {
 })
 
 
-app.post("/upload", (req, res, next) => {
-    upload(req, res, next => {
-        const path = `./upload/${req.file.originalname}`
+app.post("/upload", (req, res) => {
+    upload(req, res => {
+        const path = `./upload/${req.file.filename}`
         fs.readFile(path, async (err, data) => {
             if (err) return console.log({err})
             async function transform() {
