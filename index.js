@@ -39,24 +39,38 @@ app.get("/", (req, res, next) => {
 
 app.post("/upload", (req, res, next) => {
     upload(req, res, next => {
-        fs.readFile(`./upload/${req.file.originalname}`, async (err, data) => {
+        const path = `./upload/${req.file.originalname}`
+        fs.readFile(path, async (err, data) => {
             if (err) return console.log({err})
             async function transform() {
                 await worker.load();
                 await worker.loadLanguage('spa');
                 await worker.initialize('spa');
-                const { data: { text } } = await worker.recognize(`./upload/${req.file.originalname}`);
-                await worker.terminate();
+                const { data: { text } } = await worker.recognize(path);
+                //await worker.terminate();
                 return text
             }
             await transform()
-                .then(el => { res.send({ data: el }) })
-                .catch(err => { res.send({ msg: err }) })
+                .then(el => {
+                    const file = deleteFile(path)
+                    res.send({ data: el, file }) 
+                })
+                .catch(err => {
+                    const file = deleteFile(path)
+                    res.send({ msg: err, file }) 
+                })
         })
     })
 })
 
+const deleteFile = ( path ) => {
+    fs.unlink(path, error => {
+        if(error) return { 'status': error }
+    })
+    return {'status' : 'Deleted file'}
+} 
+
 //////////////////
 
-const PORT = process.env.PORT || '5000'
+const PORT = process.env.PORT || '50000'
 app.listen(PORT, () => { console.log(`Server running in port: ${PORT}`) })
