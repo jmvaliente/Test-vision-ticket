@@ -21,8 +21,8 @@ const storage = multer.diskStorage({
         cb(null, "./upload")
     },
     filename: (req, file, cb) => {
-        //cb(null, file.originalname)
-        cb(null, 'file') //HACK for running in heroku
+        cb(null, file.originalname)
+        //cb(null, 'file') //HACK for running in heroku
     }
 })
 const upload = multer({ storage: storage }).single('image')
@@ -40,8 +40,8 @@ app.get("/", (req, res, next) => {
 
 app.post("/upload", (req, res, next) => {
     upload(req, res, next => {
-        //const path = `./upload/${req.file.filename }`
-        const path = './upload/file' //HACK for running in heroku
+        const path = `./upload/${req.file.filename }`
+        //const path = './upload/file' //HACK for running in heroku
         fs.readFile(path, async (err, data) => {
             if (err) return console.log({err})
             async function transform() {
